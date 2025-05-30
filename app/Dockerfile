@@ -1,14 +1,28 @@
-# Étape 1 : Build avec Maven
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+# Étape 1 : Construction avec Maven
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
+
+# Définit le répertoire de travail
 WORKDIR /app
-# Copie séparée pour une meilleure utilisation du cache Docker
+
+# Copie les fichiers de configuration Maven en premier (optimisation du cache)
 COPY pom.xml .
-COPY src ./src
+COPY .mvn/ .mvn
+COPY mvnw .
+COPY src/ src/
+
+# Exécute le build Maven
 RUN mvn clean package -DskipTests
 
-# Étape 2 : Image finale
-FROM openjdk:17-jdk-alpine
+# Étape 2 : Image d'exécution finale
+FROM eclipse-temurin:17-jre-alpine
+
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+
+# Copie le JAR depuis l'étape de build
+COPY --from=builder /app/target/*.jar app.jar
+
+# Port exposé (doit correspondre à celui de votre application)
 EXPOSE 10000
+
+# Commande de lancement
 ENTRYPOINT ["java", "-jar", "app.jar"]
