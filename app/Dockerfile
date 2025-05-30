@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 # Étape 3 : copier le jar dans l'image
-COPY target/*.jar app.jar
+COPY target/*.jar app.jarcd app
 
 # Étape 4 : exposer le port (par défaut 8080)
 EXPOSE 10000
