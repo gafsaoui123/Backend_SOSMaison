@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/*.jar app.jar
 
 # Étape 4 : exposer le port (par défaut 8080)
-EXPOSE 9090
+EXPOSE 10000
 
 # Étape 5 : commande de lancement
 ENTRYPOINT ["java", "-jar", "app.jar"]
