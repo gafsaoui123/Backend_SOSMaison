@@ -1,11 +1,16 @@
-# Étape 1 : utiliser une image Java officielle
-FROM openjdk:17-jdk-alpine
-
+# Étape 1 : Build avec Maven
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
-COPY --from=build /app/app/target/*.jar app.jar
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Étape 4 : exposer le port (par défaut 8080)
+# Étape 2 : Image finale avec JDK seulement
+FROM openjdk:17-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+
+# Port exposé
 EXPOSE 10000
 
-# Étape 5 : commande de lancement
+# Commande de lancement
 ENTRYPOINT ["java", "-jar", "app.jar"]
